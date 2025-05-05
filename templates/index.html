@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-yellow-100 via-white to-blue-100 min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white shadow-lg flex flex-col justify-between py-8 px-6 min-h-screen">
+        <div>
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-4xl">📝</span>
+                <h2 class="text-2xl font-bold text-blue-700">To-Do App</h2>
+            </div>
+            <div class="mb-8">
+                <span class="text-gray-500 text-sm">User:</span>
+                <p class="font-medium text-blue-600">{{ user }}</p>
+            </div>
+        </div>
+        <a href="/logout" class="mt-auto text-center bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-2 px-4 rounded transition">Logout</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+        <h1 class="text-3xl font-extrabold text-blue-800 mb-8 tracking-tight">Your Tasks</h1>
+
+        <!-- Add Task Form -->
+        <form method="POST" action="/add" class="flex flex-wrap gap-4 items-end bg-white rounded-lg shadow p-6 mb-10">
+            <div class="flex-1">
+                <label class="block text-gray-700 text-sm font-semibold mb-1">Title</label>
+                <input name="title" required class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition" placeholder="Title">
+            </div>
+            <div class="flex-1">
+                <label class="block text-gray-700 text-sm font-semibold mb-1">Description</label>
+                <input name="description" required class="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition" placeholder="Description">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-semibold mb-1">Start</label>
+                <input type="date" name="start" required class="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+            </div>
+            <div>
+                <label class="block text-gray-700 text-sm font-semibold mb-1">End</label>
+                <input type="date" name="end" required class="px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 transition">
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded shadow transition">Add</button>
+        </form>
+
+        <!-- Pending Tasks -->
+        <section class="mb-10">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <span class="text-2xl">📋</span> Pending
+            </h2>
+            <div class="space-y-3">
+                {% for task in tasks %}
+                    {% if task.status == 'pending' %}
+                        <div class="flex items-center justify-between bg-white rounded-lg shadow px-5 py-4 hover:shadow-lg transition">
+                            <div>
+                                <span class="font-semibold text-blue-700">{{ task.title }}</span>
+                                <span class="text-gray-600">- {{ task.description }}</span>
+                                <span class="ml-2 text-xs text-gray-400">[Due: {{ task.end }}]</span>
+                            </div>
+                            <form method="GET" action="/complete/{{ task.id }}">
+                                <input type="checkbox" class="w-6 h-6 accent-blue-600 cursor-pointer" onChange="this.form.submit()" title="Mark as completed">
+                            </form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Completed Tasks -->
+        <section>
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2 mb-4">
+                <span class="text-2xl">✅</span> Completed
+            </h2>
+            <div class="space-y-3">
+                {% for task in tasks %}
+                    {% if task.status == 'completed' %}
+                        <div class="flex items-center bg-green-50 rounded-lg px-5 py-4 line-through text-gray-400">
+                            <span>
+                                <span class="font-semibold">{{ task.title }}</span>
+                                <span>- {{ task.description }}</span>
+                            </span>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
